@@ -1,6 +1,6 @@
 from threading import Thread, Lock, Event
 from collections import deque
-from typing import Deque, Callable, Any, List
+from typing import Deque, Callable, Any, List, Self
 
 
 # python sentinel object, see PEP 661
@@ -56,6 +56,12 @@ class ThreadPool:
         self.tasks: Deque[Task] = deque()
         self.lock = Lock()
         self.is_shutdown = False
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        self.shutdown()
 
     def _task_done(self) -> None:
         with self.lock:
